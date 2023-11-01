@@ -14,7 +14,7 @@ void Alpha::Mesh::SetupMesh()
 
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO));
 	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indice.size() * sizeof(unsigned int),
-		&vertice[0], GL_STATIC_DRAW));
+		&indice[0], GL_STATIC_DRAW));
 
 	// 顶点位置position
 	GLCall(glEnableVertexAttribArray(0));
@@ -74,7 +74,10 @@ void Alpha::Mesh::Draw(LM::Shader& shader)
 		else if (name == "texture_specular")
 			number = std::to_string(specularNr++);
 		else
-			__debugbreak();
+		{
+			// __debugbreak();
+			continue;
+		}
 
 		// 这里可能出现uniform找不到的问题
 		// 检查纹理数量是否超过了采样器

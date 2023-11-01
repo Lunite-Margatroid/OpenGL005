@@ -1,10 +1,20 @@
 #pragma once
+#ifndef STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#endif
+
+
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #include <sstream>
 #include <fstream>
@@ -26,19 +36,26 @@
 #define PI 3.14159f
 #endif
 
-struct Vertex
+// 命名空间Alpha
+// opengl005项目新写的代码所用的namespace
+// 在此之前的class写在namespace LM中
+namespace Alpha
 {
-	glm::vec3 position;
-	glm::vec3 normal;
-	glm::vec3 texCoord;
-};
+	struct Vertex
+	{
+		glm::vec3 position;
+		glm::vec3 normal;
+		glm::vec2 texCoord;
+	};
 
-struct Texture
-{
-	unsigned int id;
-	std::string type;
-};
-
+	struct Texture
+	{
+		unsigned int id;
+		std::string type;
+		aiString path;
+	};
+}
 void GLClearError();
 bool GLLogCall(const char* function, const char* file, int line);
 
+unsigned int TextureFromFile(const char* filename, const std::string &directory);

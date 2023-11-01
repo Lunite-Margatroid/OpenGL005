@@ -2,16 +2,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #endif
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include <stb/stb_image.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 #include "render.h"
 #include "Camera.h"
@@ -19,10 +10,14 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "SpotLight.h"
+#include "Model.h"
 
+#include <windows.h>
+// 函数声明
 GLFWwindow* InitGL();
 void UpdateTimer();
 void ProcessInput(GLFWwindow* window);
+void RuntimeLog();
 // 全局变量
 float currentTime = 0.0f;
 float deltaTime = 0.0f;
@@ -36,21 +31,47 @@ int main()
 {
 	GLFWwindow* window = InitGL();
 
-	lastTime = currentTime = glfwGetTime();
-	while (!glfwWindowShouldClose(window))
-	{
+	// 线框模式
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-		// 更新时间变量
-		UpdateTimer();
-		// 处理键盘控制输入
-		ProcessInput(window);
-		// 交换缓冲
-		glfwSwapBuffers(window);
-		// 清除颜色和深度检测缓冲
-		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-		// 检查触发事件
-		glfwPollEvents();
+	// 模型路径
+	std::string pathNanosuit("L:/OpenGL/model/nanosuit/nanosuit.obj");
+	std::string pathLumine("L:/OpenGL/model/lumine/lumine.pmx");
+
+	lastTime = currentTime = glfwGetTime();
+	{
+		LM::Shader shader("./res/Shader/DiffuseOnlyVertex.shader", "./res/Shader/DiffuseOnlyFragment.shader");
+		Alpha::Model model(pathLumine.c_str());
+
+		while (!glfwWindowShouldClose(window))
+		{
+			glm::mat4 viewTrans = camera.GetViewTrans();
+			glm::mat4 projectionTrans = camera.GetProjectionTrans();
+			glm::mat4 modelTrans = eMat;
+			glm::vec3 cameraPos = camera.GetPosition();
+
+			shader.Bind();
+			shader.SetUniformMatrix4f("viewTrans", false, glm::value_ptr(viewTrans));
+			shader.SetUniformMatrix4f("projectionTrans", false, glm::value_ptr(projectionTrans));
+			shader.SetUniformMatrix4f("modelTrans", false, glm::value_ptr(modelTrans));
+
+			model.Draw(shader);
+
+			// log
+			RuntimeLog();
+			// 更新时间变量
+			UpdateTimer();
+			// 处理键盘控制输入
+			ProcessInput(window);
+			// 交换缓冲
+			glfwSwapBuffers(window);
+			// 清除颜色和深度检测缓冲
+			GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+			// 检查触发事件
+			glfwPollEvents();
+		}
 	}
+	glfwTerminate();
 	return 0;
 }
 
@@ -137,4 +158,24 @@ void UpdateTimer()
 	currentTime = glfwGetTime();
 	deltaTime = currentTime - lastTime;
 	lastTime = currentTime;
+}
+
+void RuntimeLog()
+{
+	static glm::vec3 cameraPos = camera.GetPosition();
+	cameraPos = camera.GetPosition();
+	
+	
+	std::cout << "Camera current position:" << '(' << cameraPos.x << ',' << cameraPos.y
+		<< ',' << cameraPos.z << ")                " << std::endl;
+
+
+	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD coord;
+	CONSOLE_SCREEN_BUFFER_INFO cursorInfo;
+	GetConsoleScreenBufferInfo(hOut, &cursorInfo);
+	coord = cursorInfo.dwCursorPosition;
+	coord.X = 0;
+	coord.Y -= 1;
+	SetConsoleCursorPosition(hOut, coord);
 }

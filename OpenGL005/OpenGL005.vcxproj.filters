@@ -54,6 +54,9 @@
     <ClCompile Include="src\Texture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\Model.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h">
@@ -86,9 +89,14 @@
     <ClInclude Include="src\Texture.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Model.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shader\Vertex.shader" />
     <None Include="res\Shader\Fragment.shader" />
+    <None Include="res\Shader\DiffuseOnlyFragment.shader" />
+    <None Include="res\Shader\DiffuseOnlyVertex.shader" />
   </ItemGroup>
 </Project>
