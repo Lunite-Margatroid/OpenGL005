@@ -29,6 +29,14 @@ LM::Camera camera;
 
 int main()
 {
+	std::cout << "请输入建模文件完整路径(不支持中文)" << std::endl;
+	std::string pathStr;
+	std::getline(std::cin,pathStr);
+	for (std::string::iterator i = pathStr.begin(); i != pathStr.end(); i++)
+	{
+		if (*i == '\\')
+			*i = '/';
+	}
 	GLFWwindow* window = InitGL();
 
 	// 线框模式
@@ -38,10 +46,11 @@ int main()
 	std::string pathNanosuit("L:/OpenGL/model/nanosuit/nanosuit.obj");
 	std::string pathLumine("L:/OpenGL/model/lumine/lumine.pmx");
 
+
 	lastTime = currentTime = glfwGetTime();
 	{
 		LM::Shader shader("./res/Shader/DiffuseOnlyVertex.shader", "./res/Shader/DiffuseOnlyFragment.shader");
-		Alpha::Model model(pathLumine.c_str());
+		Alpha::Model model(pathStr.c_str());
 
 		while (!glfwWindowShouldClose(window))
 		{
